@@ -1,0 +1,51 @@
+---
+  - name:         fail unless ansible executing as unix user postgres
+    when:         not (ansible_user_id == "postgres")
+    fail:         msg="Detected ansible_user_id='{{ ansible_user_id}}'. This role must run as 'postgres'"
+
+  - name :       /var/log/postgres 
+    file:        path=/var/log/postgresql   state=directory   owner=postgres  mode=0750
+
+  - name:           ensure no postmaster running at  cluster
+    shell:          "pg_ctl -D {{ cluster }} stop"
+    ignore_errors:  True
+    environment:  
+      PATH:        "{{ ansible_env.HOME }}/dist-pg/bin:{{ ansible_env.PATH}}:/usr/bin"
+
+  - name:          rm -rf ~/{{ cluster }}/*
+    when:          purge_directory
+    shell:         "rm -rf {{cluster}}/*"
+    #if not a mountpoit#    file: dest="{{ansible_env.HOME}}/{{cluster}}"  state=absent
+
+
+  - name:        "initdb  {{ initdb_options}} {{ cluster }}"
+    shell:       "initdb {{ initdb_options}} {{ cluster }}"
+    environment:
+       PATH:   "{{ ansible_env.HOME }}/dist-pg/bin:{{ ansible_env.PATH}}"
+
+################## conf.d    ##########################################################################
+ 
+  - name:        mkdir conf.d
+    file:        dest="{{ cluster }}/conf.d"  state=directory
+
+  - name:       copy conf.d
+    copy:       src="{{ item }}"  dest="{{ cluster }}/conf.d/"  owner=postgres  mode=0640
+    with_fileglob:
+        - conf.d/*
+
+  - name:      s/karat/cluster
+    replace:   dest="{{ cluster }}/conf.d/io_1.conf"  regexp='karat'  replace="{{cluster | basename}}"
+
+  - name:      s/543./5324
+    replace:   dest="{{ cluster }}/conf.d/io_1.conf"  regexp='543.'  replace="{{pport}}"
+
+  - name:       postgresql.conf   +include conf.d
+    lineinfile:
+       path:         "{{ cluster }}/postgresql.conf"
+       insertafter:  "^#include_dir = 'conf.d'"
+       line:         "include_dir = 'conf.d'"
+
+  - name:      ~/.bash_pg
+    replace:   dest="{{ ansible_env.HOME }}/.bash_pg"  regexp='543.'  replace="{{pport}}"
+    ignore_errors: yes
+#####################################################################################################

@@ -1,0 +1,6 @@
+purge_directory:     true
+pgdir:               pg-9.10
+cluster:             green
+pport:               5434
+postgres_passwd:     silver
+

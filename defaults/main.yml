@@ -1,0 +1,4 @@
+purge_directory:     False
+cluster:             ~postgres/green
+pport:               5434
+initdb_options:      -k --locale=en_US.UTF-8 -E utf8
