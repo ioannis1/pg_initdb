@@ -1,4 +1,4 @@
-Role Name
+Role ioannis1.pg_initdb
 =========
 
 Uses initdb(1) to initialise a postgres cluster. If postmaster was already running at cluster it will be stopped.
@@ -39,16 +39,14 @@ These are the default values for the variables; where,
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+None.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
     - hosts: servers
       roles:
-         - { role: username.rolename, x: 42 }
+         - { role: ioannis1.pg_initdb, cluster: ~postgres/main }
 
 License
 -------
@@ -57,5 +55,5 @@ BSD
 
 Author Information
 ------------------
+Ioannis Tambouras <ioannis@akroninc.net>
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
