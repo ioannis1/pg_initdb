@@ -4,10 +4,14 @@ galaxy_info:
   company: Akron Inc
   license: "MIT"
   min_ansible_version: 1.2
+  galaxy_tags: 
+        - postgresql
+        - initdb
+  platforms:
+       - name: Debian
+       - name: FreeBSD
 
-#galaxy_tags: 
-# - postgresql
-# - initdb
+
 
 allow_duplicates: no
 dependencies: []
