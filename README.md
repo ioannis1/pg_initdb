@@ -25,15 +25,15 @@ Role Variables
 
 cluster:             ~postgres/green
 purge_directory:     False
-pport:               5434
+port:                5434
 initdb_options:      -k --locale=en_US.UTF-8 -E utf8
 
 
 These are the default values for the variables; where, 
-'cluster'          is the $PGDATA directory 
-'purge_directory'  is whether to delete any pre-existing files from cluster directory. 
-'pport'            is the port for postgres server 
-'initdb_options'   are options to initdb(1)
+'cluster'          $PGDATA directory 
+'purge_directory'  whether to delete any pre-existing files from cluster directory. 
+'port'             port of postgres server 
+'initdb_options'   options to initdb(1)
 
 
 Dependencies
