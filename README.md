@@ -29,7 +29,6 @@ purge_directory:     False
 cluster:             ~postgres/green
 port:                5432
 initdb_options:      -k --locale=en_US.UTF-8 -E utf8
-postgresql_conf:     True
 
 
 where,
@@ -38,8 +37,6 @@ cluster           $PGDATA directory
 purge_directory   whether to delete any pre-existing files from cluster directory. 
 port              port of postgres server 
 initdb_options    options to initdb(1)
-postgresql_conf   Modifies postgresql.conf in order to 'include' conf/io_1.conf. Set it to 'False'
-                  to disable modification and keep official configurations parameters untached.
 
 
 Dependencies

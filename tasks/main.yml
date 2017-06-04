@@ -33,7 +33,6 @@
     template:    src=io_1.conf.j2   dest="{{ cluster }}/conf.d/io_1.conf"  owner=postgres
 
   - name:        postgresql.conf   +include conf.d
-    when:        postgresql_conf
     lineinfile:
        path:         "{{ cluster }}/postgresql.conf"
        insertafter:  "^#include_dir = 'conf.d'"
