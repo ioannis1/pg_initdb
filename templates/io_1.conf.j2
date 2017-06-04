@@ -1,66 +1,66 @@
-port                = {{ port }}
-max_prepared_transactions = 2
-cluster_name        = {{ cluster | basename }}
-idle_in_transaction_session_timeout = 30min
-#listen_addresses = '{{ ['localhost']|union(ansible_all_ipv4_addresses)|join(',')}}'
-{{ "%-25s = %-50s" | format('max_connections', 80)            }}
-{{ "%-25s = %-50s" | format('wal_level', 'hot_standby')       }}
-{{ "%-25s = %-50s" | format('wal_level', 'logical')           }}
-{{ "%-25s = %-50s" | format('max_wal_senders', '5')           }}
-{{ "%-25s = %-50s" | format('wal_keep_segments', '3')         }}
-{{ "%-25s = %-50s" | format('hot_standby', 'on')              }}
-{{ "%-25s = %-50s" | format('max_replication_slots','5')      }}
-{{ "%-25s = %-50s" | format('log_replication_commands','on')  }}
-{{ "%-25s = %-50s" | format('hot_standby_feedback','on')      }}
-{{ "%-25s = %-50s" | format('archive_mode','on')              }}
+{{ "%-30s = %-50s" | format('port', port)                     }}
+{{ "%-30s = %-50s" | format('max_prepared_transactions', 2)   }}
+{{ "%-30s = %-50s" | format('cluster_name', cluster|basename) }}
+{{ "%-30s = %-50s" | format('idle_in_transaction_session_timeout', '30min') }}
+#listen_addresses               = '{{ ['localhost']|union(ansible_all_ipv4_addresses)|join(',')}}'
+{{ "%-30s = %-50s" | format('max_connections', 80)            }}
+{{ "%-30s = %-50s" | format('wal_level', 'hot_standby')       }}
+{{ "%-30s = %-50s" | format('wal_level', 'logical')           }}
+{{ "%-30s = %-50s" | format('max_wal_senders', '5')           }}
+{{ "%-30s = %-50s" | format('wal_keep_segments', '3')         }}
+{{ "%-30s = %-50s" | format('hot_standby', 'on')              }}
+{{ "%-30s = %-50s" | format('max_replication_slots','5')      }}
+{{ "%-30s = %-50s" | format('log_replication_commands','on')  }}
+{{ "%-30s = %-50s" | format('hot_standby_feedback','on')      }}
+{{ "%-30s = %-50s" | format('archive_mode','on')              }}
 #
-#archive_command     = 'cp %p /Users/postgres/xlog/main'
-#archive_timeout     = 600
-archive_command     = '/Users/postgres/xlog/archiver  %p %f {{ cluster | basename}}'
-#shared_preload_libraries='pg_stat_kcache,pg_qualstats'
-#shared_preload_libraries='pg_hibernator,pg_stat_statements,powa,pg_stat_kcache,pg_qualstats'
-#shared_preload_libraries='citus,cstore_fdw'
-track_activity_query_size = 2048
-track_io_timing = off
+{{ "%-30s = %-50s" | format('#archive_command', "'cp %p /Users/postgres/xlog/main'")                        }} 
+{{ "%-30s = %-50s" | format('#archive_timeout', '600')                                                      }} 
+{{ "%-30s = %-50s" | format('archive_command', "'/Users/postgres/xlog/archiver  %p %f cluster|basename'")   }} 
 
-#pg_hibernator.enabled = true
-#pg_hibernator.default_database = postgres
-#vacuum_defer_cleanup_age    = 10000
-vacuum_freeze_min_age=200000
-autovacuum_freeze_max_age=500000000    # 500 mil
-vacuum_freeze_table_age=475000000
+{{ "%-30s = %-50s" | format('#shared_preload_libraries', 'pg_stat_kcache,pg_qualstats')                   }} 
+{{ "%-30s = %-50s" | format('#shared_preload_libraries', 'pg_hibernator,pg_stat_statements,powa,pg_stat_kcache,pg_qualstats')   }} 
+{{ "%-30s = %-50s" | format('#shared_preload_libraries', 'citus,cstore_fdw')                              }} 
+
+{{ "%-30s = %-50s" | format('track_activity_query_size',2048)               }}
+{{ "%-30s = %-50s" | format('track_io_timing','off')                        }}
+
+{{ "%-30s = %-50s" | format('#pg_hibernator.enabled','true')                }}
+{{ "%-30s = %-50s" | format('#pg_hibernator.default_database','postgres')   }}
+{{ "%-30s = %-50s" | format('vacuum_defer_cleanup_age', 10000)              }}
+{{ "%-30s = %-50s" | format('vacuum_freeze_min_age', 200000)                }}
+{{ "%-30s = %-50s" | format('autovacuum_freeze_max_age', 500000000)         }}  # 500 mil
+{{ "%-30s = %-50s" | format('vacuum_freeze_table_age', 475000000)           }}
 
 
 
-#shared_preload_libraries   = '$libdir/pgmemcache'
-#shared_preload_libraries   = '$libdir/pg_stat_statements'
-track_functions = pl
-#pgmemcache.default_servers = 'localhost:11211'
-#pgmemcache.default_behavior='BINARY_NOREPLY:1'
+{{ "%-30s = %-50s" | format('#shared_preload_libraries', '$libdir/pgmemcache')           }}
+{{ "%-30s = %-50s" | format('#shared_preload_libraries', '$libdir/pg_stat_statements')   }}
+{{ "%-30s = %-50s" | format('track_functions', 'pl')                                     }}
+{{ "%-30s = %-50s" | format('#pgmemcache.default_servers', 'localhost:11211')            }}
+{{ "%-30s = %-50s" | format('#pgmemcache.default_behavior', 'BINARY_NOREPLY:1')          }}
 
-ssl           = off
+{{ "%-30s = %-50s" | format('ssl', 'off')                            }}
+{{ "%-30s = %-50s" | format('ssl_cert_file', "'server.crt'")         }}
+{{ "%-30s = %-50s" | format('ssl_ca_file', "'root.crt'")             }}
+{{ "%-30s = %-50s" | format('#ssl_crt_file', "''")                   }}
+ 
+{{ "%-30s = %-50s" | format('#wal_sync_method','fsync_writethrough') }}
 
-ssl_cert_file = 'server.crt'   
-ssl_key_file  = 'server.key'   
-ssl_ca_file   = 'root.crt' 
-ssl_crl_file  = ''
-#wal_sync_method     = fsync_writethrough
-
-synchronous_commit    = off
-#effective_cache_size  = 3216MB
-#shared_buffers        = 256MB
-
-effective_cache_size  = 1330MB
-#effective_io_concurrency = 1
-#shared_buffers        = 1186MB
-shared_buffers        = 300MB
-maintenance_work_mem  = 300MB
-work_mem              = 42MB    # for  40 connections
-wal_buffers           = 16MB
-wal_compression = on
-#checkpoint_segments   = 8
-#min_wal_size=200MB  for busty sites
-checkpoint_completion_target = 0.8
+{{ "%-30s = %-50s" | format('synchronous_commit', 'off')             }}
+{{ "%-30s = %-50s" | format('#effective_cache_size', '3216MB')       }}
+{{ "%-30s = %-50s" | format('#shared_buffers', '256MB')              }}
+{{ "%-30s = %-50s" | format('effective_cache_size', '1330MB')        }}
+{{ "%-30s = %-50s" | format('effective_io_concurrency', 1)           }}
+{{ "%-30s = %-50s" | format('#shared_buffers', '1186MB')             }}
+{{ "%-30s = %-50s" | format('shared_buffers', '300MB')               }}
+{{ "%-30s = %-50s" | format('maintenance_work_mem', '300MB')         }}
+{{ "%-30s = %-50s" | format('work_mem', '42MB')                      }}  # for 40 connections
+{{ "%-30s = %-50s" | format('wal_buffers', '16MB')                   }} 
+{{ "%-30s = %-50s" | format('wal_compression', 'off')                }} 
+{{ "%-30s = %-50s" | format('#checkpoint_segments', 8)               }} 
+{{ "%-30s = %-50s" | format('#min_wal_size', '200MB')                }} # for busy sites
+{{ "%-30s = %-50s" | format('checkpoint_completion_target', '0.8')   }} 
 
 
 
