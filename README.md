@@ -23,17 +23,23 @@ Requirements
 Role Variables
 --------------
 
-cluster:             ~postgres/green
-purge_directory:     False
-port:                5434
-initdb_options:      -k --locale=en_US.UTF-8 -E utf8
-
-
 These are the default values for the variables; where, 
-'cluster'          $PGDATA directory 
-'purge_directory'  whether to delete any pre-existing files from cluster directory. 
-'port'             port of postgres server 
-'initdb_options'   options to initdb(1)
+
+purge_directory:     False
+cluster:             ~postgres/green
+port:                5432
+initdb_options:      -k --locale=en_US.UTF-8 -E utf8
+postgresql_conf:     True
+
+
+where,
+
+cluster           $PGDATA directory 
+purge_directory   whether to delete any pre-existing files from cluster directory. 
+port              port of postgres server 
+initdb_options    options to initdb(1)
+postgresql_conf   Modifies postgresql.conf in order to 'include' conf/io_1.conf. Set it to 'False'
+                  to disable modification and keep official configurations parameters untached.
 
 
 Dependencies
@@ -46,7 +52,7 @@ Example Playbook
 
     - hosts: servers
       roles:
-         - { role: ioannis1.pg_initdb, cluster: ~postgres/main }
+         - { role: ioannis1.pg_initdb, cluster: ~postgres/main, purge_directory: True }
 
 License
 -------
