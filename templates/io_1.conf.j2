@@ -1,8 +1,8 @@
-{{ "%-30s = %-50s" | format('port', port)                     }}
-{{ "%-30s = %-50s" | format('max_prepared_transactions', 2)   }}
-{{ "%-30s = %-50s" | format('cluster_name', cluster|basename) }}
+{{ "%-30s = %-50s" | format('port', pport)                                  }}
+{{ "%-30s = %-50s" | format('max_prepared_transactions', 2)                 }}
+{{ "%-30s = '%s'"  | format('cluster_name', cluster_path | basename)        }}
 {{ "%-30s = %-50s" | format('idle_in_transaction_session_timeout', '30min') }}
-#listen_addresses               = '{{ ['localhost']|union(ansible_all_ipv4_addresses)|join(',')}}'
+#listen_addresses              = '{{ ['localhost']|union(ansible_all_ipv4_addresses)|join(',')}}'
 {{ "%-30s = %-50s" | format('max_connections', 80)            }}
 {{ "%-30s = %-50s" | format('wal_level', 'hot_standby')       }}
 {{ "%-30s = %-50s" | format('wal_level', 'logical')           }}
@@ -12,17 +12,18 @@
 {{ "%-30s = %-50s" | format('max_replication_slots','5')      }}
 {{ "%-30s = %-50s" | format('log_replication_commands','on')  }}
 {{ "%-30s = %-50s" | format('hot_standby_feedback','on')      }}
-{{ "%-30s = %-50s" | format('archive_mode','on')              }}
+{{ "%-30s = %-50s" | format('archive_mode','off')             }}
 #
-{{ "%-30s = %-50s" | format('#archive_command', "'cp %p /Users/postgres/xlog/main'")                        }} 
-{{ "%-30s = %-50s" | format('#archive_timeout', '600')                                                      }} 
-{{ "%-30s = %-50s" | format('archive_command', "'/Users/postgres/xlog/archiver  %p %f cluster|basename'")   }} 
+{{ "%-30s = '%s%s'"   | format( 'log_filename',  cluster_path | basename , '-%d.log')                          }}
+{{ "%-30s = '%s%s'"   | format('#archive_command', 'cp %p  ~postgres/xlog/', cluster_path | basename)          }} 
+{{ "%-30s = %-50s"    | format('#archive_timeout', '600')                                                      }} 
+{{ "%-30s = '%s %s'"  | format('archive_command', '~postgres/xlog/archiver  %p %f ', cluster_path | basename)  }} 
 
-{{ "%-30s = %-50s" | format('#shared_preload_libraries', 'pg_stat_kcache,pg_qualstats')                   }} 
-{{ "%-30s = %-50s" | format('#shared_preload_libraries', 'pg_hibernator,pg_stat_statements,powa,pg_stat_kcache,pg_qualstats')   }} 
-{{ "%-30s = %-50s" | format('#shared_preload_libraries', 'citus,cstore_fdw')                              }} 
+{{ "%-30s = %-50s"    | format('#shared_preload_libraries', 'pg_stat_kcache,pg_qualstats')                     }} 
+{{ "%-30s = %-50s"    | format('#shared_preload_libraries', 'pg_hibernator,pg_stat_statements,powa,pg_stat_kcache,pg_qualstats')   }} 
+{{ "%-30s = %-50s"    | format('#shared_preload_libraries', 'citus,cstore_fdw')                               }} 
 
-{{ "%-30s = %-50s" | format('track_activity_query_size',2048)               }}
+{{ "%-30s = %-50s"    | format('track_activity_query_size',2048)                                              }}
 {{ "%-30s = %-50s" | format('track_io_timing','off')                        }}
 
 {{ "%-30s = %-50s" | format('#pg_hibernator.enabled','true')                }}
@@ -31,8 +32,6 @@
 {{ "%-30s = %-50s" | format('vacuum_freeze_min_age', 200000)                }}
 {{ "%-30s = %-50s" | format('autovacuum_freeze_max_age', 500000000)         }}  # 500 mil
 {{ "%-30s = %-50s" | format('vacuum_freeze_table_age', 475000000)           }}
-
-
 
 {{ "%-30s = %-50s" | format('#shared_preload_libraries', '$libdir/pgmemcache')           }}
 {{ "%-30s = %-50s" | format('#shared_preload_libraries', '$libdir/pg_stat_statements')   }}
@@ -63,12 +62,11 @@
 {{ "%-30s = %-50s" | format('checkpoint_completion_target', '0.8')   }} 
 
 
-
 logging_collector           =  on
 log_destination             = 'stderr'
 #log_destination            = 'stderr,csvlog'
 log_directory               = '/var/log/postgresql'
-log_filename                = '{{ cluster | basename}}-%d.log'
+log_filename                = '{{ cluster_path | basename}}-%d.log'
 log_truncate_on_rotation    =  on
 log_rotation_age            =  1440   # 1 day
 log_autovacuum_min_duration =  0
@@ -84,8 +82,9 @@ log_disconnections          =  off   # replay
 log_line_prefix             = '%t [%p,%a]: [%l-1] user=%u,db=%d '
 log_checkpoints             =  on
 log_lock_waits              =  on
-log_timezone                = 'US/Pacific'
+#log_timezone               = 'US/Pacific'
+log_timezone                = 'US/Eastern'
 
 bgwriter_lru_maxpages       =  1000  
 bgwriter_lru_multiplier     =  10
-ioannis.hostport            = '{{ cluster | basename}}.{{ pport }}'
+ioannis.hostport            = '{{ cluster_path | basename}}.{{ pport }}'
