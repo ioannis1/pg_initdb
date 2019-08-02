@@ -40,10 +40,10 @@ listen_addresses              = '127.0.0.1'
 {{ "%-30s = %-50s" | format('#pgmemcache.default_servers', 'localhost:11211')            }}
 {{ "%-30s = %-50s" | format('#pgmemcache.default_behavior', 'BINARY_NOREPLY:1')          }}
 
-{{ "%-30s = %-50s" | format('ssl', 'off')                            }}
+{{ "%-30s = %-50s" | format('ssl', 'on')                             }}
 {{ "%-30s = %-50s" | format('ssl_cert_file', "'server.crt'")         }}
 {{ "%-30s = %-50s" | format('ssl_ca_file', "'root.crt'")             }}
-{{ "%-30s = %-50s" | format('#ssl_crt_file', "''")                   }}
+{{ "%-30s = %-50s" | format('ssl_key_file', "'server.key'")          }}
  
 {{ "%-30s = %-50s" | format('#wal_sync_method','fsync_writethrough') }}
 

@@ -51,15 +51,12 @@
   file:         dest="{{ cluster_path }}/conf.d"  state=directory
 
 - name:         ssl keys
-  copy:         src="ssl/{{item}}"  dest="{{ cluster_path }}"  owner=postgres  group=postgres  mode=0444
+  copy:         src="ssl/{{item}}"  dest="{{ cluster_path }}"  owner=postgres  group=postgres  mode=0644
   with_items:
       - server.key
       - server.crt 
       - root.crt
 
-- name:         server.key
-  file:         path="{{ cluster_path }}/server.key"  owner=postgres  group=postgres  mode=400
- 
 
 - name:        conf.d/
   lineinfile:
@@ -67,9 +64,21 @@
      insertafter:  "^#include_dir = 'conf.d'"
      line:         "include_dir = 'conf.d'"
 
+
 - name:         io_1.conf
   template:    src=io_1.conf.j2   dest="{{ cluster_path }}/conf.d/io_1.conf"  owner=postgres
 
+
+- name:         pg_hba
+  template:     src=pg_hba.conf.j2   dest="{{ cluster_path }}/pg_hba.conf"  owner=postgres
+
+
+- name:         mode=0600    for server.key, pg_hba.conf
+  file:         path="{{ cluster_path }}/{{ item }}"  owner=postgres  group=postgres  mode=600
+  with_items:
+      - server.key
+      - pg_hba.conf
+ 
 
 - name:       ~/.bash_pg
   replace:    dest="{{ HOME }}/postgres/.bash_pg"  regexp='543.'  replace="{{pport}}"
