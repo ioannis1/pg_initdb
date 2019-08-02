@@ -50,15 +50,26 @@
 - name:         mkdir conf.d
   file:         dest="{{ cluster_path }}/conf.d"  state=directory
 
+- name:         ssl keys
+  copy:         src="ssl/{{item}}"  dest="{{ cluster_path }}"  owner=postgres  group=postgres  mode=0444
+  with_items:
+      - server.key
+      - server.crt 
+      - root.crt
 
-- name:         io_1.conf
-  template:    src=io_1.conf.j2   dest="{{ cluster_path }}/conf.d/io_1.conf"  owner=postgres
+- name:         server.key
+  file:         path="{{ cluster_path }}/server.key"  owner=postgres  group=postgres  mode=400
+ 
 
-- name:        postgresql.conf   with conf.d/
+- name:        conf.d/
   lineinfile:
      path:         "{{ cluster_path }}/postgresql.conf"
      insertafter:  "^#include_dir = 'conf.d'"
      line:         "include_dir = 'conf.d'"
+
+- name:         io_1.conf
+  template:    src=io_1.conf.j2   dest="{{ cluster_path }}/conf.d/io_1.conf"  owner=postgres
+
 
 - name:       ~/.bash_pg
   replace:    dest="{{ HOME }}/postgres/.bash_pg"  regexp='543.'  replace="{{pport}}"
