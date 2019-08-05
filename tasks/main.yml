@@ -20,6 +20,9 @@
      SHELL:  "/usr/local/bin/bash"
   when:  os_family == "FreeBSD"
 
+- stat:      path="{{ ansible_env.HOME }}/dist-pg/share/extension/timescaledb.control"
+  register:  ts_control
+
 #################################################     M A I N
 - name:          fail unless ansible executing as unix user postgres
   when:          not (ansible_user_id == "postgres")
@@ -68,6 +71,12 @@
 - name:         io_1.conf
   template:    src=io_1.conf.j2   dest="{{ cluster_path }}/conf.d/io_1.conf"  owner=postgres
 
+- name:            shared_preload_libraries
+  lineinfile:
+     path:         "{{ cluster_path }}/conf.d/io_1.conf"
+     insertafter:  ^#shared_preload_libraries
+     line:         shared_preload_libraries       = 'timescaledb'
+  when:           ts_control.stat.exists
 
 - name:         pg_hba
   template:     src=pg_hba.conf.j2   dest="{{ cluster_path }}/pg_hba.conf"  owner=postgres
@@ -80,8 +89,7 @@
       - pg_hba.conf
  
 
-- name:       ~/.bash_pg
-  replace:    dest="{{ HOME }}/postgres/.bash_pg"  regexp='543.'  replace="{{pport}}"
-  ignore_errors: yes
-  when:       false
+        #- name:       ~/.bash_pg
+        #replace:    dest="{{ HOME }}/postgres/.bash_pg"  regexp='543.'  replace="{{pport}}"
+        #ignore_errors: yes
 #####################################################################################################
