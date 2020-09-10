@@ -25,7 +25,7 @@ listen_addresses              = '127.0.0.1'
 {{ "%-30s = %-50s"    | format('#shared_preload_libraries', 'citus,cstore_fdw')                               }} 
 {{ "%-30s = %-50s"    | format('#shared_preload_libraries', '$libdir/pgmemcache')                             }}
 {{ "%-30s = %-50s"    | format('#shared_preload_libraries', "'timescaledb,pg_stat_statements'")                }}
-{{ "%-30s = %-50s"    | format('shared_preload_libraries', "'timescaledb'")                                    }}
+{{ "%-30s = %-50s"    | format('#shared_preload_libraries', "'timescaledb'")                                   }}
 
 {{ "%-30s = %-50s"    | format('track_activity_query_size',2048)                                              }}
 {{ "%-30s = %-50s" | format('track_io_timing','off')                        }}
