@@ -2,19 +2,18 @@
  local   all      postgres           md5
  local   all      postgres           peer      
  local   all      ioannis            peer      
- local   all      nagios             peer      
  local   all      all                reject    
 ######################################################################## ipv4  Connections  
  hostssl all     ioannis               127.0.0.1/32      cert    clientcert=1
  host   all      postgres              127.0.0.1/32      trust
  host   all      ioannis               127.0.0.1/32      md5       
- host   all      nagios                127.0.0.1/32      md5       
+ host   all      read_only             127.0.0.1/32      md5       
  host   all      prometheus            127.0.0.1/32      md5       
  host   all      all                   127.0.0.1/32      md5       
 
  host   all      postgres              10.0.0.24/32      md5       
  host   all      ioannis               10.0.0.24/32      md5       
- host   all      nagios                10.0.0.24/32      md5       
+ host   all      read_only             10.0.0.24/32      md5       
 ######################################################################## ipv6  Connections  
  host   all      postgres                   ::1/128      md5       
 ####################################################################### Replication  Connections
