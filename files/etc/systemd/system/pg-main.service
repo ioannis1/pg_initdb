@@ -1,0 +1,34 @@
+# systemd service for managing all PostgreSQL clusters on the system. This
+# service is actually a systemd target, but we are using a service since
+# targets cannot be reloaded.
+
+[Unit]
+Description=PostgreSQL cluster "main"
+After = network.target
+ConditionPathExists=/home/postgres/main/postgresql.conf
+#WorkingDirectory=/home/postgres/main
+
+#ZZKillUserProcesses=false
+
+
+[Service]
+Type=forking
+#Type=notify
+ExecStart=/home/postgres/dist-main/bin/pg_ctl  -D /home/postgres/main   start -w
+ExecStop=/home/postgres/dist-main/bin/pg_ctl  -D /home/postgres/main   stop
+ExecReload=/bin/kill -HUP  $MAINPID
+OOMScoreAdjust=-900
+User=postgres
+#Environment=PGDATA=/home/postgres/main
+Environment=PGCONFIG=/home/postgres/dist-main/bin/pg_config
+
+#Group=postgres
+#Restart=on-failure
+
+
+RemoveIPC=no
+
+#RemainAfterExit=on
+
+[Install]
+WantedBy=multi-user.target

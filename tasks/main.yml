@@ -96,3 +96,6 @@
         #replace:    dest="{{ HOME }}/postgres/.bash_pg"  regexp='543.'  replace="{{pport}}"
         #ignore_errors: yes
 #####################################################################################################
+#
+- include:  systemd.yml
+  when:    {{ os_family }} == 'Linux'

@@ -1,0 +1,7 @@
+- name:        Files   /etc/systemd/system
+  become_user:  root
+  become:       yes
+   synchronize:  src="etc/systemd/system/"  dest="/etc/systemd/system/"  copy_links=yes  delete='no'  owner=no  dirs=yes rsync_opts=--ignore-existing
+
+#- start systemd
+  #systemd:    name="pg-main"   daemon_reload="yes"   state="started"
