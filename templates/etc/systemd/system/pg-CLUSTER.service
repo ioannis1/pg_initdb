@@ -5,7 +5,7 @@ After = network.target
 ConditionPathExists=/home/postgres/{{ cluster }}/postgresql.conf
 #WorkingDirectory=/home/postgres/{{ cluster }}
 
-#ZZKillUserProcesses=false
+#KillUserProcesses=yes
 
 
 [Service]

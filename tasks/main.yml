@@ -26,10 +26,21 @@
 - stat:      path="{{ ansible_env.HOME }}/dist-pg/share/extension/timescaledb.control"
   register:  ts_control
 
+########## asset existance of  symlink  ~postgres/dist-{{ cluster}}
+- name:  "pg-{{postgres_REL}}"
+  stat:   path="{{ HOME }}/postgres/pg-{{postgres_REL}}" 
+  register: des
+
+- name:  assert "pg-{{postgres_REL}}"
+  assert:   that="des.stat.isdir"   quiet=yes 
+
 #################################################     M A I N
-- name:          fail unless ansible executing as unix user postgres
-  when:          not (ansible_user_id == "postgres")
-  fail:          msg="Detected ansible_user_id='{{ ansible_user_id}}'. This role must run as 'postgres'"
+- name:             assert ansible executing as unix user postgres
+  assert:        
+     that:          ansible_user_id == "postgres"
+     fail_msg:      "Detected ansible_user_id='{{ ansible_user_id}}'. Must run as 'postgres'"
+     success_msg:   "Running as {{ ansible_user_id}}"
+     quiet:         true
 
 - name :         /var/log/postgres 
   become_user:   root
@@ -51,7 +62,7 @@
 - name:         "initdb  {{ initdb_options}} {{ cluster_path }}"
   shell:        "initdb {{ initdb_options}} {{ cluster_path }}"
   environment:
-     PATH:        "{{ HOME }}/postgres/dist-pg/bin:{{ ansible_env.PATH}}:/usr/bin"
+     PATH:        "{{ HOME }}/postgres/pg-{{postgres_REL}}/bin:{{ ansible_env.PATH}}:/usr/bin"
 
 ################## conf.d    ##########################################################################
  
@@ -63,14 +74,15 @@
   with_items:
       - server.crt 
       - root.crt
+      - server.key
 
 - name:         ssl server key
-  copy:         src='ssl/server.key'  dest="{{ cluster_path }}"  owner=postgres  group=postgres  mode=0600
+  file:         dest="{{ cluster_path }}/server.key"  owner=postgres  group=postgres  mode=0600
 
 - name:        conf.d/
   lineinfile:
      path:         "{{ cluster_path }}/postgresql.conf"
-     insertafter:  "^#include_dir = 'conf.d'"
+     insertbefore:  EOF
      line:         "include_dir = 'conf.d'"
 
 
@@ -82,7 +94,9 @@
      path:         "{{ cluster_path }}/conf.d/io_1.conf"
      insertafter:  ^#shared_preload_libraries
      line:         shared_preload_libraries       = 'timescaledb'
-  when:           ts_control.stat.exists
+  when:           
+      -  false
+      - ts_control.stat.exists
 
 - name:         pg_hba
   template:     src=pg_hba.conf.j2   dest="{{ cluster_path }}/pg_hba.conf"  owner=postgres
@@ -101,4 +115,5 @@
 #####################################################################################################
 #
 - include:  systemd.yml
-  when:    {{ os_family }} == 'Linux'
+  when:  
+     -   os_family == 'Linux'
