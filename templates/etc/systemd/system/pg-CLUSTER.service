@@ -1,0 +1,31 @@
+
+[Unit]
+Description=PostgreSQL cluster "{{ cluster }}"
+After = network.target
+ConditionPathExists=/home/postgres/{{ cluster }}/postgresql.conf
+#WorkingDirectory=/home/postgres/{{ cluster }}
+
+#ZZKillUserProcesses=false
+
+
+[Service]
+Type=forking
+#Type=notify
+ExecStart=/home/postgres/dist-{{ cluster }}/bin/pg_ctl  -D /home/postgres/{{ cluster }}   start -w
+ExecStop=/home/postgres/dist-{{ cluster }}/bin/pg_ctl  -D /home/postgres/{{ cluster }}   stop
+ExecReload=/bin/kill -HUP  $MAINPID
+OOMScoreAdjust=-900
+User=postgres
+#Environment=PGDATA=/home/postgres/{{ cluster }}
+Environment=PGCONFIG=/home/postgres/dist-{{ cluster }}/bin/pg_config
+
+#Group=postgres
+#Restart=on-failure
+
+
+RemoveIPC=no
+
+#RemainAfterExit=on
+
+[Install]
+WantedBy=multi-user.target

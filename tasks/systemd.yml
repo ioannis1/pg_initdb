@@ -1,7 +1,13 @@
 - name:        Files   /etc/systemd/system
   become_user:  root
   become:       yes
-   synchronize:  src="etc/systemd/system/"  dest="/etc/systemd/system/"  copy_links=yes  delete='no'  owner=no  dirs=yes rsync_opts=--ignore-existing
+  template:  src="etc/systemd/system/pg-CLUSTER.service"  dest="/etc/systemd/system/pg-{{cluster}}.service"   owner=root mode=644 
 
-#- start systemd
-  #systemd:    name="pg-main"   daemon_reload="yes"   state="started"
+- name:             start systemd
+  when:             false
+  systemd:    
+     name:          "pg-{{ cluster }}"
+     daemon_reload: yes    
+     state:         started   
+     enabled:       yes 
+     force:         yes
