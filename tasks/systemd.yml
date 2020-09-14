@@ -3,6 +3,20 @@
   become:       yes
   template:  src="etc/systemd/system/pg-CLUSTER.service"  dest="/etc/systemd/system/pg-{{cluster}}.service"   owner=root mode=644 
 
+########## asset existance of  symlink  ~postgres/dist-{{ cluster}} 
+- name:  "symlink dist-{{cluster}}"
+  stat:   path="{{ HOME }}/postgres/dist-{{cluster}}" 
+  register: des
+
+- assert: 
+     that:
+        - des.stat.islnk
+     fail_msg:    "{{ HOME }}/dest-{{cluster}}:  not a symlink"
+     success_msg: "dest-{cluster}}: symlink exists"
+     quiet:       true
+
+
+#############################################
 - name:             start systemd
   when:             false
   systemd:    

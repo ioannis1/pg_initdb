@@ -3,8 +3,11 @@
 - shell:  uname -s
   register: result
 
-- set_fact: os_family="{{result.stdout}}"
+- set_fact: 
+     os_family:  "{{ result.stdout }}"
+     cluster:    "{{ cluster_path | regex_search('([a-zA-Z]*)$') }}"
 
+- set_fact: 
 - set_fact: 
       HOME:  "/home"
       SHELL: "/bin/bash"
