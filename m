@@ -33,7 +33,7 @@
 - name:  assert "pg-{{postgres_REL}}"
   assert:   that="des.stat.isdir"   quiet=yes 
 
-#################################################     Assertions
+#################################################     M A I N
 - name:             assert ansible executing as unix user postgres
   assert:        
      that:          ansible_user_id == "postgres"
@@ -41,18 +41,16 @@
      success_msg:   "Running as {{ ansible_user_id}}"
      quiet:         true
 
-- name:     check if postmastert is running
-  stat:     path="{{ cluster_path }}/postmaster.pid"
-  register: pglock
-
-- name:  assert "{{ cluster_path }}/postmaster.pid"
-  assert:   that="not pglock.stat.exists"   quiet=yes
-
-#################################################     M A I N
 - name :         /var/log/postgres 
   become_user:   root
   become:        yes
   file:          path=/var/log/postgresql   state=directory   owner=postgres  mode=0750
+
+- name:           ensure no postmaster running at  cluster
+  shell:          "pg_ctl -D {{ cluster_path }} stop"
+  ignore_errors:  True
+  environment:  
+     PATH:        "{{ HOME }}/postgres/dist-pg/bin:{{ ansible_env.PATH}}:/usr/bin"
 
 - name:          rm -rf ~/{{ cluster_path }}/*
   when:          purge_directory

@@ -3,4 +3,4 @@ cluster_path:        ~postgres/karat
 pport:                5432
 initdb_options:      -k --locale=en_US.UTF-8 -E utf8
 postgres_REL:         REL_12_4
-need_systemd          true
+need_systemd:         true
