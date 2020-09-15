@@ -116,4 +116,5 @@
 #
 - include:  systemd.yml
   when:  
+     -   need_systemd
      -   os_family == 'Linux'
